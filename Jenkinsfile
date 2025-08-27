@@ -71,10 +71,13 @@ pipeline {
             }
         }
         stage("Trivy Scan") {
-            steps {
-                script {
-		   sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image mydevopsuser46/devops-mega-project:latest  --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-                }       
-    }
+			script {
+				script {
+
+					sh "curl -v -k --user admin:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'http://35.245.226.171:8080/job/Gitops-devops-mega-project/buildWithParameters?token=gitops-token'"
+				}
+				
+			}
+		}
+	}	
 }
-    }
