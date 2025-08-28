@@ -74,10 +74,20 @@ pipeline {
 			script {
 				script {
 
-					sh "curl -v -k --user admin:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}'"
+					sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image gopal2432/devops-mega-project:latest  --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
 				}
 				
 			}
 		}
-	}	
+
+		stage ('Cleanup Artifacts') {
+            steps {
+                script {
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+	}
+	
 }
